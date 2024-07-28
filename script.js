@@ -5,21 +5,19 @@ const searchBtn = document.querySelector("#search-btn");
 const weatherIcon = document.querySelector(".weather-icon");
 
 async function getWeather(city) {
+	try{
     const response = await fetch(`${apiUrl}${city}`);
-
-    if (response.status === 404) {
-        document.querySelector(".error").style.display = "block";
-        document.querySelector(".weather").style.display = "none";
-    } else {
+    if (!response.ok) {
+         throw new Error("Failed to fetch");
+	}
         const data = await response.json();
-        console.log(data);
         document.querySelector(".city").innerHTML = data.location.name;
         document.querySelector(".temp").innerHTML = Math.round(data.current.temp_c) + "°c";
         document.querySelector(".humidity").innerHTML = data.current.humidity + "%";
         document.querySelector(".wind").innerHTML = data.current.wind_kph + " km/hr";
 
         switch (data.current.condition.text) {
-            case "Clouds":
+            case "Cloud":
                 weatherIcon.src = "cloud.jpg";
                 break;
             case "Clear":
@@ -34,11 +32,23 @@ async function getWeather(city) {
             case "Mist":
                 weatherIcon.src = "mist.jpg";
                 break;
+			case "Snow":
+                weatherIcon.src = "snow.jpg";
+                break;
+			case "Thunderstorm":
+                weatherIcon.src = "thunderstorm.jpg";
+                break;
+			case "Haze":
+                weatherIcon.src = "haze.jpg";
+                break;
             
         }
 
         document.querySelector(".weather").style.display = "block";
         document.querySelector(".error").style.display = "none";
+    }catch (error) {
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".weather").style.display = "none";
     }
 }
 
